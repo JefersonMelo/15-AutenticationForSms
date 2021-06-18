@@ -14,8 +14,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AutenticationForSms">
         <activity android:name=".activiy.ConnectMainActivity" />
-        <activity android:name=".activiy.ValidarTokenMainActivity" />
-        <activity android:name=".activiy.MainActivity">
+        <activity android:name=".activiy.ValidarTokenMainActivity"
+            android:windowSoftInputMode="stateVisible"/>
+        <activity android:name=".activiy.MainActivity"
+            android:windowSoftInputMode="stateVisible">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
