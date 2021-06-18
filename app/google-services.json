@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "363603956492",
+    "project_id": "autenticatio-for-sms",
+    "storage_bucket": "autenticatio-for-sms.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:363603956492:android:0dba9ef5b0033cf6762f29",
+        "android_client_info": {
+          "package_name": "com.jefmelo.autenticationforsms"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "363603956492-796jvkne9128ak7q3l4idl7p60n2ofmt.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.jefmelo.autenticationforsms",
+            "certificate_hash": "58ff1c105fd63998999722fcbe24749975c5f819"
+          }
+        },
+        {
+          "client_id": "363603956492-aee2komsvnhobhs94t73pg01sifv6gjs.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZCxMS2G3VLDgDF1zgExVUVwMdm6Z9BTo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "363603956492-aee2komsvnhobhs94t73pg01sifv6gjs.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
