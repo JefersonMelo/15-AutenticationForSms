@@ -1,0 +1,2 @@
+rootProject.name = "Autentication For Sms"
+include ':app'
