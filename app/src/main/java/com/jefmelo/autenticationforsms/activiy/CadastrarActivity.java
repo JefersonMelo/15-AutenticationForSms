@@ -1,8 +1,5 @@
 package com.jefmelo.autenticationforsms.activiy;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -11,8 +8,10 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.text.TextUtils;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.jefmelo.autenticationforsms.databinding.ActivityCadastrarBinding;
-import com.jefmelo.autenticationforsms.databinding.ActivityMainBinding;
 import com.jefmelo.autenticationforsms.helper.Permissoes;
 import com.jefmelo.autenticationforsms.util.MaskFormatUtil;
 
@@ -55,13 +54,24 @@ public class CadastrarActivity extends AppCompatActivity {
                     + binding.editTextCodArea.getText().toString()
                     + binding.editTexTelefone.getText().toString();
 
+            if (TextUtils.isEmpty(binding.editTextCodPais.getText().toString())) {
+                binding.editTextCodPais.setError("Por favor, Digite o Código do País");
+                return;
+            }
+            if (TextUtils.isEmpty(binding.editTextCodArea.getText().toString())) {
+                binding.editTextCodArea.setError("Por favor, Digite o Código do Área");
+                return;
+            }
+            if (TextUtils.isEmpty(binding.editTexTelefone.getText().toString())) {
+                binding.editTexTelefone.setError("Por favor, Digite um Telefone Válido");
+                return;
+            }
+
             telFormatado = "+" + MaskFormatUtil.unmask(telSemFormatar);
 
-            if (TextUtils.isEmpty(telSemFormatar)) {
-                progressDialog.setTitle(nomeUsuario);
-                progressDialog.setMessage("Digite um Telefone Válido.");
-                progressDialog.show();
-                progressDialog.setCanceledOnTouchOutside(true);
+            if (TextUtils.isEmpty(nomeUsuario)) {
+                binding.editTextNome.setError("Por favor, Digite um Nome");
+                return;
             } else {
                 progressDialog.setTitle("Aguarde...");
                 progressDialog.setCanceledOnTouchOutside(false);
@@ -69,6 +79,7 @@ public class CadastrarActivity extends AppCompatActivity {
                 progressDialog.show();
                 Intent intent = new Intent(CadastrarActivity.this, ValidarTokenActivity.class);
                 intent.putExtra("numTelefone", telFormatado);
+                intent.putExtra("nomeUsuario", nomeUsuario);
                 startActivity(intent);
             }
         });

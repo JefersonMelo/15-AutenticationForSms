@@ -30,6 +30,8 @@ public class ValidarTokenActivity extends AppCompatActivity {
     private PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks;
     private String mVerificationId;
     private String telDigitado;
+    private String _otp;
+    private String nomeUsuario;
     private ProgressDialog progressDialog;
 
     @Override
@@ -43,11 +45,11 @@ public class ValidarTokenActivity extends AppCompatActivity {
         progressDialog.setCanceledOnTouchOutside(false);
         progressDialog.show();
 
-        //getSupportActionBar().hide();
         binding.editTextSmsValidador.requestFocus();
 
         //Recebe o telefone digitado pelo usuário no MainActivity
         telDigitado = getIntent().getStringExtra("numTelefone");
+        nomeUsuario = getIntent().getStringExtra("nomeUsuario");
 
         binding.textViewChecandoNumero.setText("Verificando: " + telDigitado);
 
@@ -91,26 +93,19 @@ public class ValidarTokenActivity extends AppCompatActivity {
 
         //github
         binding.editTextSmsValidador.setOtpCompletionListener(otp -> {
-            PhoneAuthCredential credential = PhoneAuthProvider.getCredential(mVerificationId, otp);
-            firebaseAuth.signInWithCredential(credential).addOnCompleteListener(task -> {
-                if (task.isSuccessful()) {
-                    Toast.makeText(ValidarTokenActivity.this, "Conectado", Toast.LENGTH_LONG).show();
-                } else {
-                    Toast.makeText(ValidarTokenActivity.this, "Falhou", Toast.LENGTH_LONG).show();
-                }
-            });
+            _otp = otp;
+            verifyNumberPhoneWithCode( mVerificationId, _otp);
         });
         //github
 
         binding.btnValidador.setOnClickListener(v -> {
-            Intent intent = new Intent(ValidarTokenActivity.this, ConectarActivity.class);
-
-            startActivity(intent);
-            finish();
+            verifyNumberPhoneWithCode( mVerificationId, _otp);
         });
 
         binding.textViewReenviarCod.setOnClickListener(v -> {
             if (TextUtils.isEmpty(telDigitado)) {
+                Intent intent = new Intent(ValidarTokenActivity.this, CadastrarActivity.class);
+                startActivity(intent);
                 Toast.makeText(ValidarTokenActivity.this, "Número Inválido: " + telDigitado, Toast.LENGTH_LONG).show();
             } else {
                 resendPhoneNumberVerification(telDigitado, forceResendingToken);
@@ -146,16 +141,29 @@ public class ValidarTokenActivity extends AppCompatActivity {
         PhoneAuthProvider.verifyPhoneNumber(authOptions);
     }
     //Final resendPhoneNumberVerification
-/*
-    private void verifyNumberPhoneWithCode(String verificationId, String codigo) {
-        //progressDialog.setMessage("Verificando...");
-        //progressDialog.show();
-        PhoneAuthCredential authCredential = PhoneAuthProvider.getCredential(verificationId, codigo);
-        signInWithPhoneAuthCredential(authCredential);
+
+    private void verifyNumberPhoneWithCode(String verificationId, String _otp) {
+        PhoneAuthCredential credential = PhoneAuthProvider.getCredential(verificationId, _otp);
+
+        firebaseAuth.signInWithCredential(credential).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                Intent intent = new Intent(ValidarTokenActivity.this, LogadoActivity.class);
+                intent.putExtra("nomeUsuario", nomeUsuario);
+                startActivity(intent);
+                finishAffinity();
+                Toast.makeText(ValidarTokenActivity.this, "Conectado", Toast.LENGTH_LONG).show();
+            } else {
+                if (TextUtils.isEmpty(binding.editTextSmsValidador.toString())){
+                    binding.editTextSmsValidador.setError("Por favor, Digite o Token Recebido");
+                    return;
+                }
+                Toast.makeText(ValidarTokenActivity.this, "Falhou", Toast.LENGTH_LONG).show();
+            }
+        });
 
     }
     //Final verifyNumberPhoneWithCode
-*/
+
     protected void signInWithPhoneAuthCredential(PhoneAuthCredential authCredential) {
         //progressDialog.setMessage("Conectando...");
 

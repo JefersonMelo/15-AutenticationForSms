@@ -4,14 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_gravity="center_horizontal|center_vertical"
     android:background="@color/red_primary"
-    tools:context=".activiy.CadastrarActivity">
+    tools:context=".activiy.LoginActivity">
 
     <ImageView
         android:id="@+id/imageView_logo"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:layout_marginTop="36dp"
+        android:layout_marginTop="40dp"
         android:contentDescription="@string/app_name"
         android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
@@ -34,35 +35,12 @@
         app:layout_constraintTop_toBottomOf="@+id/imageView_logo" />
 
     <EditText
-        android:id="@+id/editText_nome"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="70dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:ems="10"
-        android:hint="Digite Seu Nome"
-        android:includeFontPadding="false"
-        android:inputType="textPersonName"
-        android:textColor="@color/white"
-        android:textColorHighlight="@color/white"
-        android:textColorHint="@color/white"
-        android:textColorLink="@color/black"
-        android:textCursorDrawable="@color/black"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txt_nome_app" />
-
-    <EditText
         android:id="@+id/editTex_telefone"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
-        android:autoText="false"
+        android:layout_marginTop="50dp"
         android:ems="10"
         android:hint="@string/telefone"
         android:inputType="number"
@@ -72,8 +50,9 @@
         android:textColorLink="@color/black"
         android:textCursorDrawable="@color/black"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/editText_Cod_area"
-        app:layout_constraintTop_toBottomOf="@+id/editText_nome" />
+        app:layout_constraintTop_toBottomOf="@+id/txt_nome_app" />
 
     <EditText
         android:id="@+id/editText_Cod_Pais"
@@ -111,12 +90,12 @@
         app:layout_constraintStart_toEndOf="@+id/editText_Cod_Pais" />
 
     <Button
-        android:id="@+id/btn_cadastrar"
+        android:id="@+id/btn_Conectar"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="30dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
         android:background="@color/white"
@@ -131,24 +110,37 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editText_Senha_Cadastro"
-        tools:text="@string/btn_cadastrar" />
+        app:layout_constraintTop_toBottomOf="@+id/editText_Senha_Conectar"
+        tools:text="@string/txt_btn_conectar" />
 
     <EditText
-        android:id="@+id/editText_Senha_Cadastro"
+        android:id="@+id/editText_Senha_Conectar"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="30dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
         android:ems="10"
-        android:hint="Digite Uma Senha"
         android:inputType="textPassword"
-        android:textColorHint="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editTex_telefone" />
+
+    <TextView
+        android:id="@+id/textView_novo_cadastro"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:clickable="true"
+        android:text="@string/txt_Novo_cadastro"
+        android:textColor="@color/white"
+        android:textColorLink="@color/gray"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_Conectar"
+        app:layout_constraintVertical_bias="0.25" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

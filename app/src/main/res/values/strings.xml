@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Autentication For Sms</string>
+    <string name="app_name">Autentication</string>
     <string name="btn_cadastrar">Cadastrar</string>
     <string name="txt_validador">Validar</string>
     <string name="cod_area">(11)</string>
@@ -12,4 +12,7 @@
     <string name="validacao">Validação</string>
     <string name="digite_o_codigo_do_sms_recebido">Digite o Código do SMS Recebido.</string>
     <string name="hint_digite_nome">Digite Seu Nome</string>
+    <string name="title_activity_login">LoginActivity</string>
+    <string name="txt_btn_conectar">Conectar</string>
+    <string name="txt_Novo_cadastro">Não Tem Conta? <b>Cadastre-se</b></string>
 </resources>

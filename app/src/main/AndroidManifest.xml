@@ -13,7 +13,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AutenticationForSms"
         android:usesCleartextTraffic="true">
-        <activity android:name=".activiy.CadastrarActivity"
+        <activity
+            android:name=".activiy.LoginActivity"
             android:windowSoftInputMode="stateVisible">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -21,10 +22,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activiy.ConectarActivity" />
-        <activity android:name=".activiy.ValidarTokenActivity"
+
+        <activity
+            android:name=".activiy.CadastrarActivity"
             android:windowSoftInputMode="stateVisible" />
-        <activity android:name=".activiy.MainActivity"
+        <activity android:name=".activiy.LogadoActivity" />
+        <activity
+            android:name=".activiy.ValidarTokenActivity"
+            android:windowSoftInputMode="stateVisible" />
+        <activity
+            android:name=".activiy.MainActivity"
             android:windowSoftInputMode="stateVisible" />
     </application>
 
