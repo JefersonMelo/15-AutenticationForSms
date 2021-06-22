@@ -1,47 +1,41 @@
 package com.jefmelo.autenticationforsms.activiy;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Log;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseException;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthOptions;
 import com.google.firebase.auth.PhoneAuthProvider;
-import com.jefmelo.autenticationforsms.databinding.ActivityMainBinding;
-import com.jefmelo.autenticationforsms.databinding.ActivityValidarTokenMainBinding;
-import com.mukesh.OnOtpCompletionListener;
+import com.jefmelo.autenticationforsms.databinding.ActivityValidarTokenBinding;
 
 import java.util.concurrent.TimeUnit;
 
-public class ValidarTokenMainActivity extends AppCompatActivity {
+public class ValidarTokenActivity extends AppCompatActivity {
 
-    protected ActivityValidarTokenMainBinding binding;
-
+    private static final String TAG = "MAIN_TAG";
+    protected ActivityValidarTokenBinding binding;
     //Firebase Auth
     private FirebaseAuth firebaseAuth;
     private PhoneAuthProvider.ForceResendingToken forceResendingToken;
     private PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks;
-
     private String mVerificationId;
     private String telDigitado;
-    private static final String TAG = "MAIN_TAG";
-
     private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivityValidarTokenMainBinding.inflate(getLayoutInflater());
+        binding = ActivityValidarTokenBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         progressDialog = new ProgressDialog(this);
@@ -68,60 +62,64 @@ public class ValidarTokenMainActivity extends AppCompatActivity {
                 // 2 - Recuperação automática. Em alguns dispositivos, o Google Play Services pode automaticamente
                 // detecta o SMS de verificação de entrada e executa a verificação sem
                 // ação do usuário.
-
+                signInWithPhoneAuthCredential(phoneAuthCredential);
             }
 
             @Override
             public void onVerificationFailed(@NonNull FirebaseException e) {
                 // Este retorno de chamada é invocado em uma solicitação inválida para verificação feita,
                 // por exemplo, se o formato do número de telefone não for válido.
-
+                progressDialog.dismiss();
+                Toast.makeText(ValidarTokenActivity.this, "" + e.getMessage(), Toast.LENGTH_LONG).show();
             }
 
             @Override
-            public void onCodeSent(@NonNull String verificarId, @NonNull PhoneAuthProvider.ForceResendingToken forceResendingToken) {
+            public void onCodeSent(@NonNull String verificarId, @NonNull PhoneAuthProvider.ForceResendingToken token) {
                 super.onCodeSent(verificarId, forceResendingToken);
                 // O código de verificação de SMS foi enviado para o número de telefone fornecido, nós
                 // agora precisa pedir ao usuário para inserir o código e, em seguida, construir uma credencial
                 // combinando o código com um ID de verificação.
-
+                Log.d("SMS", "onCodeSent" + verificarId);
                 progressDialog.dismiss();
                 mVerificationId = verificarId;
+                forceResendingToken = token;
+                progressDialog.dismiss();
             }
         };
 
-        PhoneAuthOptions options = PhoneAuthOptions.newBuilder(firebaseAuth)
-                .setPhoneNumber(telDigitado)
-                .setTimeout(60L, TimeUnit.SECONDS)
-                .setActivity(this)
-                .setCallbacks(mCallbacks)
-                .build();
+        startPhoneNumberVerification(telDigitado);
 
-        PhoneAuthProvider.verifyPhoneNumber(options);
-
+        //github
         binding.editTextSmsValidador.setOtpCompletionListener(otp -> {
             PhoneAuthCredential credential = PhoneAuthProvider.getCredential(mVerificationId, otp);
             firebaseAuth.signInWithCredential(credential).addOnCompleteListener(task -> {
-                if (task.isSuccessful()){
-                    Toast.makeText(ValidarTokenMainActivity.this, "Conectado", Toast.LENGTH_LONG).show();
-                }else{
-                    Toast.makeText(ValidarTokenMainActivity.this, "Falhou", Toast.LENGTH_LONG).show();
+                if (task.isSuccessful()) {
+                    Toast.makeText(ValidarTokenActivity.this, "Conectado", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(ValidarTokenActivity.this, "Falhou", Toast.LENGTH_LONG).show();
                 }
             });
         });
+        //github
 
         binding.btnValidador.setOnClickListener(v -> {
-            Intent intent = new Intent(ValidarTokenMainActivity.this, ConnectMainActivity.class);
+            Intent intent = new Intent(ValidarTokenActivity.this, ConectarActivity.class);
+
             startActivity(intent);
             finish();
+        });
+
+        binding.textViewReenviarCod.setOnClickListener(v -> {
+            if (TextUtils.isEmpty(telDigitado)) {
+                Toast.makeText(ValidarTokenActivity.this, "Número Inválido: " + telDigitado, Toast.LENGTH_LONG).show();
+            } else {
+                resendPhoneNumberVerification(telDigitado, forceResendingToken);
+            }
         });
 
     }//Final OnCreate
 
     private void startPhoneNumberVerification(String telDigitado) {
-        //progressDialog.setMessage("Checando...");
-        //progressDialog.show();
-
         PhoneAuthOptions options = PhoneAuthOptions.newBuilder(firebaseAuth)
                 .setPhoneNumber(telDigitado)
                 .setTimeout(60L, TimeUnit.SECONDS)
@@ -130,13 +128,12 @@ public class ValidarTokenMainActivity extends AppCompatActivity {
                 .build();
 
         PhoneAuthProvider.verifyPhoneNumber(options);
-
     }
     //Final startPhoneNumberVerification
 
     private void resendPhoneNumberVerification(String tel, PhoneAuthProvider.ForceResendingToken token) {
-        //progressDialog.setMessage("Reenviando...");
-        //progressDialog.show();
+        progressDialog.setMessage("Reenviando...");
+        progressDialog.show();
 
         PhoneAuthOptions authOptions = PhoneAuthOptions.newBuilder(firebaseAuth)
                 .setPhoneNumber(tel)
@@ -147,10 +144,9 @@ public class ValidarTokenMainActivity extends AppCompatActivity {
                 .build();
 
         PhoneAuthProvider.verifyPhoneNumber(authOptions);
-
     }
     //Final resendPhoneNumberVerification
-
+/*
     private void verifyNumberPhoneWithCode(String verificationId, String codigo) {
         //progressDialog.setMessage("Verificando...");
         //progressDialog.show();
@@ -159,7 +155,7 @@ public class ValidarTokenMainActivity extends AppCompatActivity {
 
     }
     //Final verifyNumberPhoneWithCode
-
+*/
     protected void signInWithPhoneAuthCredential(PhoneAuthCredential authCredential) {
         //progressDialog.setMessage("Conectando...");
 
@@ -167,21 +163,19 @@ public class ValidarTokenMainActivity extends AppCompatActivity {
                 .addOnSuccessListener(authResult -> {
                     progressDialog.dismiss();
                     String telefone = firebaseAuth.getCurrentUser().getPhoneNumber();
-                    //Toast.makeText(ValidarCodigoMainActivity.this, "Conectado com: " + telefone, Toast.LENGTH_LONG).show();
+                    Toast.makeText(ValidarTokenActivity.this, "Conectado com: " + telefone, Toast.LENGTH_LONG).show();
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         progressDialog.dismiss();
-                        //Toast.makeText(ValidarCodigoMainActivity.this, "" + e.getMessage(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(ValidarTokenActivity.this, "" + e.getMessage(), Toast.LENGTH_LONG).show();
                     }
                 });
-
-
     }
     //Final signInWithPhoneAuthCredential
 
 }//Final Activity
 
-//https://youtu.be/F_UemS493IM?t=2157
+//https://youtu.be/F_UemS493IM?t=2150
 //https://firebase.google.com/docs/auth/android/phone-auth?hl=pt-br
