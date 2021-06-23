@@ -11,6 +11,8 @@ import android.text.TextUtils;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.jefmelo.autenticationforsms.config.ConfigFirebase;
 import com.jefmelo.autenticationforsms.databinding.ActivityCadastrarBinding;
 import com.jefmelo.autenticationforsms.helper.Permissoes;
 import com.jefmelo.autenticationforsms.util.MaskFormatUtil;
@@ -22,12 +24,18 @@ public class CadastrarActivity extends AppCompatActivity {
             Manifest.permission.INTERNET
     };
 
-    private ActivityCadastrarBinding binding;
+    private FirebaseAuth auth;
 
-    private String telFormatado;
+    private ActivityCadastrarBinding binding;
 
     //Progressive Dialog
     private ProgressDialog progressDialog;
+
+    private String telFormatado;
+    private String nomeUsuario;
+    private String senha;
+    private String id;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +43,6 @@ public class CadastrarActivity extends AppCompatActivity {
         binding = ActivityCadastrarBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        //getSupportActionBar().hide();
         binding.editTextNome.requestFocus();
 
         Permissoes.validarPermissoes(1, this, permissoesNecessarias);
@@ -47,9 +54,11 @@ public class CadastrarActivity extends AppCompatActivity {
 
         //Bloqueio de touch durante progresso
         progressDialog = new ProgressDialog(this);
+        auth = ConfigFirebase.getFirebaseAuth();
 
         binding.btnCadastrar.setOnClickListener(v -> {
-            String nomeUsuario = binding.editTextNome.getText().toString();
+            nomeUsuario = binding.editTextNome.getText().toString();
+            senha = binding.editTextSenhaCadastro.getText().toString();
             String telSemFormatar = binding.editTextCodPais.getText().toString()
                     + binding.editTextCodArea.getText().toString()
                     + binding.editTexTelefone.getText().toString();
@@ -66,8 +75,13 @@ public class CadastrarActivity extends AppCompatActivity {
                 binding.editTexTelefone.setError("Por favor, Digite um Telefone Válido");
                 return;
             }
+            if (TextUtils.isEmpty(binding.editTextSenhaCadastro.getText().toString())) {
+                binding.editTextSenhaCadastro.setError("Por favor, Digite uma Senha");
+                return;
+            }
 
             telFormatado = "+" + MaskFormatUtil.unmask(telSemFormatar);
+            id = auth.getUid();
 
             if (TextUtils.isEmpty(nomeUsuario)) {
                 binding.editTextNome.setError("Por favor, Digite um Nome");
@@ -77,9 +91,12 @@ public class CadastrarActivity extends AppCompatActivity {
                 progressDialog.setCanceledOnTouchOutside(false);
                 progressDialog.setMessage("Verificando Número do Telefone...");
                 progressDialog.show();
+
                 Intent intent = new Intent(CadastrarActivity.this, ValidarTokenActivity.class);
                 intent.putExtra("numTelefone", telFormatado);
                 intent.putExtra("nomeUsuario", nomeUsuario);
+                intent.putExtra("senha", senha);
+                intent.putExtra("id", id);
                 startActivity(intent);
             }
         });
@@ -111,4 +128,5 @@ public class CadastrarActivity extends AppCompatActivity {
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
     }//Final: Requerimento de Permissões
-}
+
+}//Final da Classe

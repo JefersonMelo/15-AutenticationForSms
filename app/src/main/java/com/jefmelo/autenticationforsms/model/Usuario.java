@@ -1,5 +1,9 @@
 package com.jefmelo.autenticationforsms.model;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.Exclude;
+import com.jefmelo.autenticationforsms.config.ConfigFirebase;
+
 public class Usuario {
 
     private String id;
@@ -7,14 +11,25 @@ public class Usuario {
     private String telefone;
     private String senha;
 
-    public Usuario() { }
+    public Usuario() {
+    }
 
-    public Usuario(String id, String nome, String telefone) {
+    public void salvarUsuario() {
+        DatabaseReference databaseReference = ConfigFirebase.getDatabaseReference();
+        databaseReference
+                .child("users")
+                .child(getId())
+                .setValue(this);
+    }
+
+    public Usuario(String id, String nome, String senha, String telefone) {
         this.id = id;
         this.nome = nome;
+        this.senha = senha;
         this.telefone = telefone;
     }
 
+    @Exclude
     public String getId() {
         return id;
     }

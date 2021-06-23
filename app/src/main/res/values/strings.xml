@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Autentication</string>
+    <string name="app_name">Autentication For Sms</string>
     <string name="btn_cadastrar">Cadastrar</string>
     <string name="txt_validador">Validar</string>
     <string name="cod_area">(11)</string>

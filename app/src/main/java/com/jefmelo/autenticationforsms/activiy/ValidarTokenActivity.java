@@ -17,22 +17,29 @@ import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthOptions;
 import com.google.firebase.auth.PhoneAuthProvider;
 import com.jefmelo.autenticationforsms.databinding.ActivityValidarTokenBinding;
+import com.jefmelo.autenticationforsms.model.Usuario;
 
 import java.util.concurrent.TimeUnit;
 
 public class ValidarTokenActivity extends AppCompatActivity {
 
-    private static final String TAG = "MAIN_TAG";
-    protected ActivityValidarTokenBinding binding;
+    private static final String TAG = "SMS";
+    private ActivityValidarTokenBinding binding;
+
     //Firebase Auth
     private FirebaseAuth firebaseAuth;
     private PhoneAuthProvider.ForceResendingToken forceResendingToken;
     private PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks;
+
     private String mVerificationId;
     private String telDigitado;
     private String _otp;
     private String nomeUsuario;
+    private String senha;
+    private String id;
+
     private ProgressDialog progressDialog;
+    private Usuario user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,8 +55,13 @@ public class ValidarTokenActivity extends AppCompatActivity {
         binding.editTextSmsValidador.requestFocus();
 
         //Recebe o telefone digitado pelo usuário no MainActivity
-        telDigitado = getIntent().getStringExtra("numTelefone");
+        id = getIntent().getStringExtra("id");
         nomeUsuario = getIntent().getStringExtra("nomeUsuario");
+        senha = getIntent().getStringExtra("senha");
+        telDigitado = getIntent().getStringExtra("numTelefone");
+
+        //Usuario(String id, String nome, String senha, String telefone)
+        user = new Usuario(id, nomeUsuario, senha, telDigitado);
 
         binding.textViewChecandoNumero.setText("Verificando: " + telDigitado);
 
@@ -81,7 +93,7 @@ public class ValidarTokenActivity extends AppCompatActivity {
                 // O código de verificação de SMS foi enviado para o número de telefone fornecido, nós
                 // agora precisa pedir ao usuário para inserir o código e, em seguida, construir uma credencial
                 // combinando o código com um ID de verificação.
-                Log.d("SMS", "onCodeSent" + verificarId);
+                Log.d(TAG, "onCodeSent" + verificarId);
                 progressDialog.dismiss();
                 mVerificationId = verificarId;
                 forceResendingToken = token;
@@ -114,6 +126,10 @@ public class ValidarTokenActivity extends AppCompatActivity {
 
     }//Final OnCreate
 
+    private void cadastrarUsuario(){
+        user.salvarUsuario();
+    }
+
     private void startPhoneNumberVerification(String telDigitado) {
         PhoneAuthOptions options = PhoneAuthOptions.newBuilder(firebaseAuth)
                 .setPhoneNumber(telDigitado)
@@ -144,9 +160,10 @@ public class ValidarTokenActivity extends AppCompatActivity {
 
     private void verifyNumberPhoneWithCode(String verificationId, String _otp) {
         PhoneAuthCredential credential = PhoneAuthProvider.getCredential(verificationId, _otp);
-
+        
         firebaseAuth.signInWithCredential(credential).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
+                cadastrarUsuario();
                 Intent intent = new Intent(ValidarTokenActivity.this, LogadoActivity.class);
                 intent.putExtra("nomeUsuario", nomeUsuario);
                 startActivity(intent);
@@ -164,7 +181,7 @@ public class ValidarTokenActivity extends AppCompatActivity {
     }
     //Final verifyNumberPhoneWithCode
 
-    protected void signInWithPhoneAuthCredential(PhoneAuthCredential authCredential) {
+    private void signInWithPhoneAuthCredential(PhoneAuthCredential authCredential) {
         //progressDialog.setMessage("Conectando...");
 
         firebaseAuth.signInWithCredential(authCredential)
@@ -183,7 +200,10 @@ public class ValidarTokenActivity extends AppCompatActivity {
     }
     //Final signInWithPhoneAuthCredential
 
+
+
 }//Final Activity
 
 //https://youtu.be/F_UemS493IM?t=2150
+//https://youtu.be/F_UemS493IM?t=3030
 //https://firebase.google.com/docs/auth/android/phone-auth?hl=pt-br
